@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Login - Interview Prep Hub</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#eef2f7; display:flex; align-items:center; justify-content:center; height:100vh; }
+    .box { width:350px; padding:20px; background:white; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    h2 { text-align:center; margin-bottom:20px; }
+    input { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px; }
+    button { width:100%; padding:10px; background:#0b5ed7; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; }
+    button:hover { background:#0946a0; }
+    p { text-align:center; margin-top:12px; }
+    a { color:#0b5ed7; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .msg { text-align:center; color:red; font-size:14px; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button id="loginBtn">Login</button>
+    <div class="msg" id="msg"></div>
+    <p>Don’t have an account? <a href="signup.html">Signup</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTeN9mbQ7Hmv9_GBmPiGr8PUb6A0MYPo",
+      authDomain: "interview-prep-hub-13e2a.firebaseapp.com",
+      projectId: "interview-prep-hub-13e2a",
+      storageBucket: "interview-prep-hub-13e2a.appspot.com",
+      messagingSenderId: "502506471022",
+      appId: "1:502506471022:web:80db675a8298f625d3b07f",
+      measurementId: "G-1CM9ERK0FM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const msgDiv = document.getElementById("msg");
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        msgDiv.style.color = "red";
+        msgDiv.textContent = "Email and password are required!";
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        msgDiv.style.color = "green";
+        msgDiv.textContent = "Login successful ✅ Redirecting...";
+        setTimeout(() => { window.location.href = "index.html"; }, 1000);
+      } catch (error) {
+        msgDiv.style.color = "red";
+        msgDiv.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
+

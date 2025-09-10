@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Experiences</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f6f9; }
+    header { background:#0b5ed7; color:white; padding:15px; text-align:center; }
+    main { max-width:800px; margin:20px auto; padding:20px; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    .experience { border-bottom:1px solid #ddd; padding:15px 0; }
+    .experience h3 { margin:0; color:#0b5ed7; }
+    .experience p { margin:5px 0; }
+    footer { text-align:center; background:#111; color:#bbb; padding:10px; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>All Interview Experiences</h1>
+  </header>
+
+  <main id="experiencesList">
+    <p>Loading experiences...</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Interview Prep Hub | Designed by Jismitha</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTeN9mbQ7Hmv9_GBmPiGr8PUb6A0MYPo",
+      authDomain: "interview-prep-hub-13e2a.firebaseapp.com",
+      projectId: "interview-prep-hub-13e2a",
+      storageBucket: "interview-prep-hub-13e2a.appspot.com",
+      messagingSenderId: "502506471022",
+      appId: "1:502506471022:web:80db675a8298f625d3b07f",
+      measurementId: "G-1CM9ERK0FM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const experiencesList = document.getElementById("experiencesList");
+
+    async function loadExperiences() {
+      experiencesList.innerHTML = "<p>Loading experiences...</p>";
+
+      try {
+        // Get experiences ordered by createdAt (newest first)
+        const q = query(collection(db, "experiences"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          experiencesList.innerHTML = "<p>No experiences found.</p>";
+          return;
+        }
+
+        experiencesList.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const expDiv = document.createElement("div");
+          expDiv.className = "experience";
+          expDiv.innerHTML = `
+            <h3>${data.company || "Unknown Company"}</h3>
+            <p><strong>Candidate:</strong> ${data.name || "Anonymous"}</p>
+            <p><strong>Question:</strong> ${data.question || ""}</p>
+            <p><strong>Answer:</strong> ${data.answer || ""}</p>
+          `;
+          experiencesList.appendChild(expDiv);
+        });
+      } catch (error) {
+        experiencesList.innerHTML = `<p style="color:red;">Error loading experiences: ${error.message}</p>`;
+      }
+    }
+
+    loadExperiences();
+  </script>
+</body>
+</html>
+

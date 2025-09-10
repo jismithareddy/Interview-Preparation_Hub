@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Interview Experience</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f6f9; }
+    header { background:#0b5ed7; color:white; padding:15px; text-align:center; }
+    main { max-width:600px; margin:20px auto; padding:20px; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    label { display:block; margin-top:10px; font-weight:bold; }
+    input, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:5px; }
+    button { margin-top:15px; background:#0b5ed7; color:white; padding:10px 16px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+    button:hover { background:#0949a5; }
+    footer { text-align:center; background:#111; color:#bbb; padding:10px; margin-top:20px; }
+    #status { margin-top:10px; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Add Interview Experience</h1>
+  </header>
+
+  <main>
+    <form id="experienceForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" required>
+
+      <label for="company">Company Name</label>
+      <input type="text" id="company" required>
+
+      <label for="question">Interview Question</label>
+      <textarea id="question" rows="3" required></textarea>
+
+      <label for="answer">Your Answer</label>
+      <textarea id="answer" rows="4" required></textarea>
+
+      <button type="submit">Submit Experience</button>
+    </form>
+    <p id="status"></p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Interview Prep Hub | Designed by Jismitha</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkTeN9mbQ7Hmv9_GBmPiGr8PUb6A0MYPo",
+      authDomain: "interview-prep-hub-13e2a.firebaseapp.com",
+      projectId: "interview-prep-hub-13e2a",
+      storageBucket: "interview-prep-hub-13e2a.appspot.com",
+      messagingSenderId: "502506471022",
+      appId: "1:502506471022:web:80db675a8298f625d3b07f",
+      measurementId: "G-1CM9ERK0FM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const experienceForm = document.getElementById("experienceForm");
+    const status = document.getElementById("status");
+
+    experienceForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const company = document.getElementById("company").value.trim();
+      const question = document.getElementById("question").value.trim();
+      const answer = document.getElementById("answer").value.trim();
+
+      if (!name || !company || !question || !answer) {
+        status.style.color = "red";
+        status.textContent = "All fields are required!";
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "experiences"), {
+          name,
+          company,
+          question,
+          answer,
+          createdAt: serverTimestamp()
+        });
+
+        status.style.color = "green";
+        status.textContent = "Experience submitted successfully ✅";
+        experienceForm.reset();
+      } catch (error) {
+        status.style.color = "red";
+        status.textContent = "Error: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
+
